@@ -10,6 +10,11 @@ export interface MovieSummary {
   rating: number
 }
 
+export interface Genre {
+  id: number
+  name: string
+}
+
 export interface Paginated<T> {
   page: number
   totalPages: number
