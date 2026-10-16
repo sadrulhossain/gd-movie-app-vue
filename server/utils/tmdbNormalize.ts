@@ -1,4 +1,5 @@
 import { tmdbImageUrl } from '#shared/utils/image'
+import type { WatchProvider, WatchProviders } from '#shared/types/providers'
 import type { PersonDetails } from '#shared/types/person'
 import type { CastMember, MovieDetails, MovieSummary, Paginated, Trailer } from '#shared/types/movie'
 
@@ -115,5 +116,42 @@ export function normalizePerson(person: TmdbPerson): PersonDetails {
       .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
       .slice(0, MAX_KNOWN_FOR)
       .map(normalizeMovie)
+  }
+}
+
+interface TmdbProvider {
+  provider_id: number
+  provider_name: string
+  logo_path: string | null
+  display_priority?: number
+}
+
+type TmdbCountry = { link?: string } & Partial<Record<'flatrate' | 'rent' | 'buy' | 'ads', TmdbProvider[]>>
+
+export interface TmdbProviders {
+  results: Record<string, TmdbCountry>
+}
+
+const normalizeProvider = (provider: TmdbProvider): WatchProvider => ({
+  id: provider.provider_id,
+  name: provider.provider_name,
+  logoUrl: tmdbImageUrl(provider.logo_path, 'w92')
+})
+
+export function normalizeProviders(data: TmdbProviders, region: string): WatchProviders {
+  const country = data.results?.[region]
+  const list = (providers?: TmdbProvider[]) =>
+    [...(providers ?? [])]
+      .sort((a, b) => (a.display_priority ?? 999) - (b.display_priority ?? 999))
+      .map(normalizeProvider)
+
+  return {
+    region,
+    regions: Object.keys(data.results ?? {}).sort(),
+    link: country?.link ?? null,
+    flatrate: list(country?.flatrate),
+    rent: list(country?.rent),
+    buy: list(country?.buy),
+    ads: list(country?.ads)
   }
 }
