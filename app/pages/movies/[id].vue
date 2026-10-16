@@ -91,21 +91,26 @@ useSeoMeta({
     <section v-if="movie.cast.length" aria-labelledby="cast-heading">
       <h2 id="cast-heading" class="mb-4 text-xl font-bold">Cast</h2>
       <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        <li v-for="person in movie.cast" :key="person.id" class="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">
-          <img
-            v-if="person.profileUrl"
-            :src="person.profileUrl"
-            :alt="person.name"
-            loading="lazy"
-            class="aspect-[2/3] w-full object-cover"
+        <li v-for="person in movie.cast" :key="person.id">
+          <NuxtLink
+            :to="`/people/${person.id}`"
+            class="block overflow-hidden rounded-lg border border-slate-800 bg-slate-900 transition hover:border-indigo-500"
           >
-          <div v-else class="flex aspect-[2/3] w-full items-center justify-center bg-slate-800 text-xs text-slate-500">
-            No photo
-          </div>
-          <div class="p-2">
-            <p class="text-sm font-semibold">{{ person.name }}</p>
-            <p class="text-xs text-slate-400">{{ person.character }}</p>
-          </div>
+            <img
+              v-if="person.profileUrl"
+              :src="person.profileUrl"
+              :alt="person.name"
+              loading="lazy"
+              class="aspect-[2/3] w-full object-cover"
+            >
+            <div v-else class="flex aspect-[2/3] w-full items-center justify-center bg-slate-800 text-xs text-slate-500">
+              No photo
+            </div>
+            <div class="p-2">
+              <p class="text-sm font-semibold">{{ person.name }}</p>
+              <p class="text-xs text-slate-400">{{ person.character }}</p>
+            </div>
+          </NuxtLink>
         </li>
       </ul>
     </section>

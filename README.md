@@ -17,7 +17,8 @@ A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.o
 - Genre filter chips (combine several genres, kept in the URL as `?genre=28,12`); picking a genre clears the search text, and searching drops the genres
 - Pagination, plus skeleton, empty and error states
 - Movie detail page (`/movies/<id>`), server-rendered, with SEO and social tags, poster and backdrop, rating, genres, runtime, cast and a trailer that plays in a modal on the page
-- A friendly 404 for unknown or invalid movie ids
+- Cast detail page (`/people/<id>`) with photo, biography, birth details and the movies they are known for; every cast card links to it
+- A 404 page for unknown or invalid movie and person ids
 - Local watchlist with "Want to watch" and "Watched" buttons on every card and on the detail page, saved to `localStorage`, with a filterable `/watchlist` page
 - Responsive layout with a mobile navbar
 - The TMDB key stays on the server: the browser only talks to `/api/movies/*`
@@ -102,6 +103,7 @@ All routes are `GET`, served by Nuxt server routes that call TMDB with the priva
 | `/api/movies/trending` | `page` (1 to 500, default 1) | Paginated list of movies | 1 hour |
 | `/api/movies/search` | `query` (required, max 100 characters), `page` (1 to 500, default 1) | Paginated list of movies | 5 minutes |
 | `/api/movies/discover` | `genre` (optional, up to 5 comma-separated ids, all must match), `page` (1 to 500, default 1) | Paginated list, most popular first | 1 hour |
+| `/api/people/<id>` | none | Person details with their most popular movies | 1 hour |
 | `/api/genres` | none | List of movie genres (`id`, `name`) | 24 hours |
 | `/api/movies/<id>` | none | Movie details with top cast and trailer | 1 hour |
 
@@ -110,7 +112,7 @@ Errors:
 | Status | Meaning |
 | --- | --- |
 | 400 | Invalid `query`, `page` or `id` |
-| 404 | Movie not found |
+| 404 | Movie or person not found |
 | 429 | TMDB rate limit reached |
 | 500 | `TMDB API key is not configured` |
 | 502 | TMDB rejected the key, or the request failed |
@@ -136,6 +138,7 @@ curl "http://localhost:3004/api/movies/603"
 - [ ] Clicking a card opens `/movies/<id>` with poster, rating, cast and a trailer button
 - [ ] "Watch trailer" opens a modal that autoplays, and Esc, the close button or a click outside closes it and stops the sound
 - [ ] `/movies/abc` and `/movies/999999999` show the 404 page
+- [ ] Clicking a cast card opens `/people/<id>` with photo, biography ("Read more" for long ones) and known-for movies; `/people/abc` shows the 404 page
 - [ ] "Want to watch" and "Watched" toggle on cards and on the detail page
 - [ ] Reloading keeps the watchlist, and `/watchlist` filters by status
 - [ ] No console errors or hydration warnings
@@ -190,6 +193,7 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 │   ├── pages/
 │   │   ├── index.vue              # Trending, search and genre browsing
 │   │   ├── movies/[id].vue        # Movie details
+│   │   ├── people/[id].vue        # Cast and crew details
 │   │   └── watchlist.vue          # Saved movies
 │   ├── plugins/watchlist.client.ts  # Loads and saves the watchlist (browser only)
 │   ├── stores/
@@ -197,7 +201,7 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 │   │   └── counter.ts             # Pinia demo store (not used by any page)
 │   └── app.vue
 ├── server/
-│   ├── api/movies/                # trending, search and [id] routes
+│   ├── api/                       # movies (trending, search, discover, [id]), people and genres routes
 │   └── utils/                     # TMDB client and response normalization
 ├── shared/                        # Types and helpers used by server and client
 ├── public/                        # Static files
@@ -220,7 +224,7 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 - [x] Cloudflare Workers deployment
 - [x] Trailer player
 - [x] Genre filter
-- [ ] Cast detail page
+- [x] Cast detail page
 - [ ] Where to watch
 - [ ] Reviews, media and similar movies
 - [ ] Add the official TMDB logo to the footer attribution
