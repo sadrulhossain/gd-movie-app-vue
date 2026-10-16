@@ -8,10 +8,13 @@ const open = ref(false)
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-950 text-slate-100">
+  <div class="flex min-h-screen flex-col bg-slate-950 text-slate-100">
     <header class="border-b border-slate-800">
       <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <NuxtLink to="/" class="text-lg font-bold">Movie App</NuxtLink>
+        <NuxtLink to="/" class="flex items-center gap-2 text-lg font-bold">
+          <img src="~/assets/img/logo.svg" alt="" class="h-8 w-8">
+          Movie App
+        </NuxtLink>
 
         <button
           type="button"
@@ -41,8 +44,15 @@ const open = ref(false)
       </nav>
     </header>
 
-    <main class="mx-auto max-w-6xl px-4 py-6">
+    <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
       <slot />
     </main>
+
+    <footer class="border-t border-slate-800">
+      <p class="mx-auto max-w-6xl px-4 py-6 text-sm text-slate-400">
+        This product uses the TMDB API but is not endorsed or certified by
+        <a href="https://www.themoviedb.org" target="_blank" rel="noopener" class="underline hover:text-white">TMDB</a>.
+      </p>
+    </footer>
   </div>
 </template>
