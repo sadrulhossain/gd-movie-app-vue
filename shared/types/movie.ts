@@ -4,6 +4,7 @@ export interface MovieSummary {
   title: string
   overview: string
   releaseDate: string | null
+  posterPath: string | null
   posterUrl: string | null
   backdropUrl: string | null
   rating: number
