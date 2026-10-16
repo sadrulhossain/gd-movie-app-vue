@@ -37,6 +37,7 @@ export interface Trailer {
 
 export interface MovieDetails extends MovieSummary {
   tagline: string
+  voteCount: number
   runtime: number | null
   genres: string[]
   cast: CastMember[]

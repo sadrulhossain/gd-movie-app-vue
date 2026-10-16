@@ -18,6 +18,7 @@ A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.o
 - Pagination, plus skeleton, empty and error states
 - Movie detail page (`/movies/<id>`), server-rendered, with SEO and social tags, poster and backdrop, rating, genres, runtime, cast and a trailer that plays in a modal on the page
 - Cast detail page (`/people/<id>`) with photo, biography, birth details and the movies they are known for; every cast card links to it
+- On the movie page, below the details: TMDB score with vote count, user reviews ("Load more"), videos that play in the modal, backdrop and poster galleries, similar movies, and in-page links to each section
 - "Where to watch" on the movie page: streaming, free-with-ads, rent and buy services with logos, for the visitor's country (detected on Cloudflare) with a country dropdown, credited to JustWatch
 - A 404 page for unknown or invalid movie and person ids
 - Local watchlist with "Want to watch" and "Watched" buttons on every card and on the detail page, saved to `localStorage`, with a filterable `/watchlist` page
@@ -104,6 +105,9 @@ All routes are `GET`, served by Nuxt server routes that call TMDB with the priva
 | `/api/movies/trending` | `page` (1 to 500, default 1) | Paginated list of movies | 1 hour |
 | `/api/movies/search` | `query` (required, max 100 characters), `page` (1 to 500, default 1) | Paginated list of movies | 5 minutes |
 | `/api/movies/discover` | `genre` (optional, up to 5 comma-separated ids, all must match), `page` (1 to 500, default 1) | Paginated list, most popular first | 1 hour |
+| `/api/movies/<id>/reviews` | `page` (1 to 500, default 1) | User reviews as plain text (long ones cut at 4000 characters) | 1 hour |
+| `/api/movies/<id>/media` | none | Up to 12 videos (YouTube), 12 backdrops and 12 posters | 1 hour |
+| `/api/movies/<id>/recommendations` | none | Up to 12 similar movies | 1 hour |
 | `/api/movies/<id>/providers` | `region` (optional 2-letter country code; default is the visitor's country, else `US`) | Where to watch in that country, plus every country with data | 6 hours, per country |
 | `/api/people/<id>` | none | Person details with their most popular movies | 1 hour |
 | `/api/genres` | none | List of movie genres (`id`, `name`) | 24 hours |
@@ -141,6 +145,9 @@ curl "http://localhost:3004/api/movies/603"
 - [ ] "Watch trailer" opens a modal that autoplays, and Esc, the close button or a click outside closes it and stops the sound
 - [ ] `/movies/abc` and `/movies/999999999` show the 404 page
 - [ ] "Where to watch" lists services with logos; changing the country dropdown updates the list; "JustWatch" is credited
+- [ ] The movie page shows the vote count, and the in-page links jump to their sections
+- [ ] Videos open in the modal, backdrops and posters open full size in a new tab
+- [ ] Reviews list with "Read more" and "Load more reviews"; "You might also like" shows movie cards
 - [ ] Clicking a cast card opens `/people/<id>` with photo, biography ("Read more" for long ones) and known-for movies; `/people/abc` shows the 404 page
 - [ ] "Want to watch" and "Watched" toggle on cards and on the detail page
 - [ ] Reloading keeps the watchlist, and `/watchlist` filters by status
@@ -189,6 +196,9 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 │   │   ├── GenreChips.vue         # Genre filter chips
 │   │   ├── MovieCard.vue          # Poster card with watchlist buttons
 │   │   ├── MovieCardSkeleton.vue  # Loading placeholder
+│   │   ├── MovieMedia.vue         # Videos, backdrops and posters
+│   │   ├── MovieReviews.vue       # User reviews with load more
+│   │   ├── SimilarMovies.vue      # Recommendations
 │   │   ├── TrailerPlayer.vue      # Trailer button and modal player
 │   │   ├── WhereToWatch.vue       # Streaming providers with country dropdown
 │   │   └── WatchlistButtons.vue   # Want / Watched toggles
@@ -230,7 +240,7 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 - [x] Genre filter
 - [x] Cast detail page
 - [x] Where to watch
-- [ ] Reviews, media and similar movies
+- [x] Reviews, media and similar movies
 - [ ] Add the official TMDB logo to the footer attribution
 - [ ] Add a screenshot
 - [ ] Automated tests

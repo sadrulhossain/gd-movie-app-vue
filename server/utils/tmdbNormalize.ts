@@ -27,6 +27,7 @@ export interface TmdbList {
 
 export interface TmdbDetails extends TmdbMovie {
   tagline?: string
+  vote_count?: number
   runtime: number | null
   genres: { name: string }[]
   credits?: { cast: { id: number, name: string, character: string, profile_path: string | null }[] }
@@ -77,6 +78,7 @@ export function normalizeDetails(movie: TmdbDetails): MovieDetails {
   return {
     ...normalizeMovie(movie),
     tagline: movie.tagline ?? '',
+    voteCount: movie.vote_count ?? 0,
     runtime: movie.runtime || null,
     genres: movie.genres.map(genre => genre.name),
     cast,

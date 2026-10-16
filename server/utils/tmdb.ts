@@ -49,3 +49,12 @@ export function parsePage(value: unknown): number {
   }
   return page
 }
+
+/** Reads the numeric :id route param, or throws a 400. */
+export function parseId(event: H3Event): string {
+  const id = getRouterParam(event, 'id') ?? ''
+  if (!/^\d+$/.test(id)) {
+    throw createError({ statusCode: 400, statusMessage: 'id must be a number' })
+  }
+  return id
+}

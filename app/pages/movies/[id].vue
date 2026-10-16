@@ -74,6 +74,7 @@ useSeoMeta({
 
           <p class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-300">
             <span class="font-semibold text-amber-400">★ {{ movie.rating.toFixed(1) }}</span>
+            <span v-if="movie.voteCount" class="text-slate-400">{{ movie.voteCount.toLocaleString('en-US') }} votes on TMDB</span>
             <span v-if="runtime">{{ runtime }}</span>
             <span v-if="movie.genres.length">{{ movie.genres.join(', ') }}</span>
           </p>
@@ -88,9 +89,17 @@ useSeoMeta({
       </div>
     </div>
 
+    <nav aria-label="On this page" class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-400">
+      <a href="#where-to-watch" class="hover:text-white">Where to watch</a>
+      <a v-if="movie.cast.length" href="#cast" class="hover:text-white">Cast</a>
+      <a href="#media" class="hover:text-white">Videos and images</a>
+      <a href="#reviews" class="hover:text-white">Reviews</a>
+      <a href="#similar" class="hover:text-white">Similar movies</a>
+    </nav>
+
     <WhereToWatch :movie-id="movie.id" />
 
-    <section v-if="movie.cast.length" aria-labelledby="cast-heading">
+    <section v-if="movie.cast.length" id="cast" aria-labelledby="cast-heading" class="scroll-mt-4">
       <h2 id="cast-heading" class="mb-4 text-xl font-bold">Cast</h2>
       <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         <li v-for="person in movie.cast" :key="person.id">
@@ -116,5 +125,9 @@ useSeoMeta({
         </li>
       </ul>
     </section>
+
+    <MovieMedia :movie-id="movie.id" />
+    <MovieReviews :movie-id="movie.id" />
+    <SimilarMovies :movie-id="movie.id" />
   </article>
 </template>
