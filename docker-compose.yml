@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${HOST_PORT:-3004}:3000" # host:container
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # Bind-mounted files on Windows/macOS emit no inotify events; poll instead.
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules # keeps Linux-built deps out of the host folder
+
+volumes:
+  node_modules:

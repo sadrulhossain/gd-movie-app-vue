@@ -1,10 +1,7 @@
-# IDE
-/.idea
-
 # Dependencies
 node_modules
 
-# Nuxt build output and generated files
+# Nuxt / Nitro output
 .nuxt
 .output
 .data
@@ -12,14 +9,26 @@ node_modules
 .cache
 dist
 
+# Environment files (real secrets never committed)
+.env
+.env.*
+!.env.example
+
 # Logs
 logs
 *.log
 
-# OS
+# OS files
 .DS_Store
+Thumbs.db
 
-# Environment (real secrets never committed)
-.env
-.env.*
-!.env.example
+# Editor files
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# Coverage
+coverage
+
+# Local Docker overrides
+docker-compose.override.yml
