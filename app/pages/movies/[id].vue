@@ -90,16 +90,16 @@ useSeoMeta({
     </div>
 
     <nav aria-label="On this page" class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-400">
-      <a href="#where-to-watch" class="hover:text-white">Where to watch</a>
-      <a v-if="movie.cast.length" href="#cast" class="hover:text-white">Cast</a>
-      <a href="#media" class="hover:text-white">Videos and images</a>
-      <a href="#reviews" class="hover:text-white">Reviews</a>
-      <a href="#similar" class="hover:text-white">Similar movies</a>
+      <a href="#where-to-watch" class="hover:text-slate-100">Where to watch</a>
+      <a v-if="movie.cast.length" href="#cast" class="hover:text-slate-100">Cast</a>
+      <a href="#media" class="hover:text-slate-100">Videos and images</a>
+      <a href="#reviews" class="hover:text-slate-100">Reviews</a>
+      <a href="#similar" class="hover:text-slate-100">Similar movies</a>
     </nav>
 
     <WhereToWatch :movie-id="movie.id" />
 
-    <section v-if="movie.cast.length" id="cast" aria-labelledby="cast-heading" class="scroll-mt-4">
+    <section v-if="movie.cast.length" id="cast" aria-labelledby="cast-heading" class="scroll-mt-20">
       <h2 id="cast-heading" class="mb-4 text-xl font-bold">Cast</h2>
       <AppSlider label="cast">
         <li v-for="person in movie.cast" :key="person.id" class="w-36 shrink-0 snap-start sm:w-40">

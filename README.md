@@ -22,7 +22,8 @@ A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.o
 - "Where to watch" on the movie page: streaming, free-with-ads, rent and buy services with logos, for the visitor's country (detected on Cloudflare) with a country dropdown, credited to JustWatch
 - A 404 page for unknown or invalid movie and person ids
 - Local watchlist with "Want to watch" and "Watched" buttons on every card and on the detail page, saved to `localStorage`, with a filterable `/watchlist` page
-- Responsive layout with a mobile navbar
+- Light and dark themes with a toggle in the navbar. Dark is the default, and your choice is remembered in the browser
+- Responsive layout with a mobile navbar that stays at the top while you scroll, with a frosted-glass look
 - The TMDB key stays on the server: the browser only talks to `/api/movies/*`
 - Short server-side caching of TMDB responses
 
@@ -156,6 +157,9 @@ curl "http://localhost:3004/api/movies/603"
 - [ ] "Want to watch" and "Watched" toggle on cards and on the detail page
 - [ ] Reloading keeps the watchlist, and `/watchlist` filters by status
 - [ ] No console errors or hydration warnings
+- [ ] The sun/moon button in the navbar switches between dark (default) and light, the choice survives a reload, and there is no flash of the other theme
+- [ ] Both themes are readable on every page (text, cards, buttons, sliders, modals, error messages)
+- [ ] The navbar stays at the top while scrolling, content shows blurred through it, and a shadow appears once you scroll; in-page links ("Reviews" and so on) are not hidden under it
 - [ ] The mobile menu opens and closes on a narrow window
 
 ## Troubleshooting
@@ -194,7 +198,7 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 .
 ├── app/
 │   ├── assets/
-│   │   ├── css/main.css           # Tailwind entry
+│   │   ├── css/main.css           # Tailwind entry and the light theme palette
 │   │   └── img/logo.svg           # Logo and favicon
 │   ├── components/
 │   │   ├── AppSlider.vue          # Horizontal slider with prev/next buttons
@@ -209,7 +213,7 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 │   │   ├── TrailerPlayer.vue      # Trailer button and modal player
 │   │   ├── WhereToWatch.vue       # Streaming providers with country dropdown
 │   │   └── WatchlistButtons.vue   # Want / Watched toggles
-│   ├── composables/               # useDebouncedRef, useIsClamped
+│   ├── composables/               # useDebouncedRef, useIsClamped, useTheme
 │   ├── layouts/default.vue        # Navbar, page shell, TMDB attribution footer
 │   ├── pages/
 │   │   ├── index.vue              # Trending, search and genre browsing

@@ -71,7 +71,7 @@ function onClick(event: MouseEvent) {
 
       <p class="text-sm text-slate-400">
         Video not playing?
-        <a :href="trailer.url" target="_blank" rel="noopener" class="underline hover:text-white">Open it on YouTube</a>.
+        <a :href="trailer.url" target="_blank" rel="noopener" class="underline hover:text-slate-100">Open it on YouTube</a>.
       </p>
     </div>
   </dialog>

@@ -38,7 +38,7 @@ const visible = computed(() =>
     </div>
 
     <p v-else-if="!watchlist.items.length" class="text-slate-400">
-      Your watchlist is empty. <NuxtLink to="/" class="underline hover:text-white">Browse movies</NuxtLink> and add some.
+      Your watchlist is empty. <NuxtLink to="/" class="underline hover:text-slate-100">Browse movies</NuxtLink> and add some.
     </p>
 
     <p v-else-if="!visible.length" class="text-slate-400">Nothing here yet.</p>
