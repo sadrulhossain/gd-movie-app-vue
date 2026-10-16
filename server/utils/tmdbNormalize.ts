@@ -1,6 +1,6 @@
+import { tmdbImageUrl } from '#shared/utils/image'
 import type { CastMember, MovieDetails, MovieSummary, Paginated, Trailer } from '#shared/types/movie'
 
-const IMAGE_BASE = 'https://image.tmdb.org/t/p'
 const MAX_CAST = 12
 
 // Only the TMDB fields we read.
@@ -29,16 +29,15 @@ export interface TmdbDetails extends TmdbMovie {
   videos?: { results: { name: string, site: string, type: string, key: string, official: boolean }[] }
 }
 
-const image = (size: string, path: string | null) => (path ? `${IMAGE_BASE}/${size}${path}` : null)
-
 export function normalizeMovie(movie: TmdbMovie): MovieSummary {
   return {
     id: movie.id,
     title: movie.title,
     overview: movie.overview,
     releaseDate: movie.release_date || null, // TMDB uses '' when unknown
-    posterUrl: image('w500', movie.poster_path),
-    backdropUrl: image('w780', movie.backdrop_path),
+    posterPath: movie.poster_path,
+    posterUrl: tmdbImageUrl(movie.poster_path, 'w500'),
+    backdropUrl: tmdbImageUrl(movie.backdrop_path, 'w780'),
     rating: Math.round(movie.vote_average * 10) / 10
   }
 }
@@ -65,7 +64,7 @@ export function normalizeDetails(movie: TmdbDetails): MovieDetails {
     id: person.id,
     name: person.name,
     character: person.character,
-    profileUrl: image('w185', person.profile_path)
+    profileUrl: tmdbImageUrl(person.profile_path, 'w185')
   }))
 
   return {
