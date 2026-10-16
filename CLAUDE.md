@@ -24,7 +24,7 @@ The user is learning while building. Every step has: (a) concept in 4 lines or f
 
 ## Development workflow
 
-- The app is developed in 10 segments, numbered 0–9.
+- The app is developed in 14 segments, numbered 0–13.
 - Segment 0 is the initial project directory setup. It lives in the initial `main` commit(s). Only segment 0 goes directly into `main`.
 - Segment 0 is done.
 - When a segment is finished, the user will provide instructions for the next one. Do not start a segment without those instructions.

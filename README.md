@@ -14,6 +14,7 @@ A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.o
 
 - Trending movies of the week as the default home view
 - Debounced search, with the query and page kept in the URL (`/?q=matrix&page=2`)
+- Genre filter chips (combine several genres, kept in the URL as `?genre=28,12`); picking a genre clears the search text, and searching drops the genres
 - Pagination, plus skeleton, empty and error states
 - Movie detail page (`/movies/<id>`), server-rendered, with SEO and social tags, poster and backdrop, rating, genres, runtime, cast and a trailer that plays in a modal on the page
 - A friendly 404 for unknown or invalid movie ids
@@ -100,6 +101,8 @@ All routes are `GET`, served by Nuxt server routes that call TMDB with the priva
 | --- | --- | --- | --- |
 | `/api/movies/trending` | `page` (1 to 500, default 1) | Paginated list of movies | 1 hour |
 | `/api/movies/search` | `query` (required, max 100 characters), `page` (1 to 500, default 1) | Paginated list of movies | 5 minutes |
+| `/api/movies/discover` | `genre` (optional, up to 5 comma-separated ids, all must match), `page` (1 to 500, default 1) | Paginated list, most popular first | 1 hour |
+| `/api/genres` | none | List of movie genres (`id`, `name`) | 24 hours |
 | `/api/movies/<id>` | none | Movie details with top cast and trailer | 1 hour |
 
 Errors:
@@ -125,6 +128,8 @@ curl "http://localhost:3004/api/movies/603"
 - [ ] Home shows "Trending this week" with movie cards
 - [ ] Typing in the search box updates the URL (`?q=`) about half a second after you stop typing
 - [ ] Reloading `/?q=matrix&page=2` shows the same results
+- [ ] Clicking genre chips filters the list, updates `?genre=` and highlights the chips; clicking a highlighted chip removes it
+- [ ] Typing a search clears the genre filter, and picking a genre clears the search box
 - [ ] Browser back and forward restore the previous search and page
 - [ ] Next and Previous change the page, and the page scrolls to the top
 - [ ] A search with no results (for example `zzzzzz`) shows the empty message
@@ -175,6 +180,7 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 │   │   ├── css/main.css           # Tailwind entry
 │   │   └── img/logo.svg           # Logo and favicon
 │   ├── components/
+│   │   ├── GenreChips.vue         # Genre filter chips
 │   │   ├── MovieCard.vue          # Poster card with watchlist buttons
 │   │   ├── MovieCardSkeleton.vue  # Loading placeholder
 │   │   ├── TrailerPlayer.vue      # Trailer button and modal player
@@ -182,7 +188,7 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 │   ├── composables/useDebouncedRef.ts
 │   ├── layouts/default.vue        # Navbar, page shell, TMDB attribution footer
 │   ├── pages/
-│   │   ├── index.vue              # Trending and search
+│   │   ├── index.vue              # Trending, search and genre browsing
 │   │   ├── movies/[id].vue        # Movie details
 │   │   └── watchlist.vue          # Saved movies
 │   ├── plugins/watchlist.client.ts  # Loads and saves the watchlist (browser only)
@@ -212,6 +218,11 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 - [x] Movie details
 - [x] Local watchlist
 - [x] Cloudflare Workers deployment
+- [x] Trailer player
+- [x] Genre filter
+- [ ] Cast detail page
+- [ ] Where to watch
+- [ ] Reviews, media and similar movies
 - [ ] Add the official TMDB logo to the footer attribution
 - [ ] Add a screenshot
 - [ ] Automated tests
