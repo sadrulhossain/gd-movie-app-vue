@@ -24,12 +24,12 @@ The user is learning while building. Every step has: (a) concept in 4 lines or f
 
 ## Development workflow
 
-- The app is developed in 14 segments, numbered 0–13.
+- The app is developed in 15 segments, numbered 0–14.
 - Segment 0 is the initial project directory setup. It lives in the initial `main` commit(s). Only segment 0 goes directly into `main`.
 - Segment 0 is done.
 - When a segment is finished, the user will provide instructions for the next one. Do not start a segment without those instructions.
 - Before starting a new segment, create a branch from an updated `main` (pull/update first), named `feature/<feature-name-in-kebab-case>`, e.g. `feature/movie-list`.
-- Do all work for segments 1–8 on their feature branch, not on `main`.
+- Do all work for segments 1–14 on their feature branch, not on `main`.
 
 ## Commits and code changes
 

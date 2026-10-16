@@ -1,4 +1,4 @@
-# Movie App
+# GD Movies
 
 A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.org/). It has no authentication and no database: movie data comes from TMDB through Nuxt server routes, and the watchlist lives in your browser.
 
@@ -17,7 +17,8 @@ A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.o
 - Genre filter chips (combine several genres, kept in the URL as `?genre=28,12`); picking a genre clears the search text, and searching drops the genres
 - Pagination, plus skeleton, empty and error states
 - Movie detail page (`/movies/<id>`), server-rendered, with SEO and social tags, poster and backdrop, rating, genres, runtime, cast and a trailer that plays in a modal on the page
-- Cast detail page (`/people/<id>`) with photo, biography, birth details and the movies they are known for; every cast card links to it
+- Cast detail page (`/people/<id>`) with photo, biography, birth details and a slider of the movies they are known for; every cast card links to it
+- On the movie page, below the details: TMDB score with vote count, a swipeable cast slider, tabs for videos (play in the modal), backdrops and posters with a slider for each, user reviews ("Read more" appears when a review is cut off, plus "Load more"), a similar movies slider, and in-page links to each section
 - "Where to watch" on the movie page: streaming, free-with-ads, rent and buy services with logos, for the visitor's country (detected on Cloudflare) with a country dropdown, credited to JustWatch
 - A 404 page for unknown or invalid movie and person ids
 - Local watchlist with "Want to watch" and "Watched" buttons on every card and on the detail page, saved to `localStorage`, with a filterable `/watchlist` page
@@ -104,6 +105,9 @@ All routes are `GET`, served by Nuxt server routes that call TMDB with the priva
 | `/api/movies/trending` | `page` (1 to 500, default 1) | Paginated list of movies | 1 hour |
 | `/api/movies/search` | `query` (required, max 100 characters), `page` (1 to 500, default 1) | Paginated list of movies | 5 minutes |
 | `/api/movies/discover` | `genre` (optional, up to 5 comma-separated ids, all must match), `page` (1 to 500, default 1) | Paginated list, most popular first | 1 hour |
+| `/api/movies/<id>/reviews` | `page` (1 to 500, default 1) | User reviews as plain text (long ones cut at 4000 characters) | 1 hour |
+| `/api/movies/<id>/media` | none | Up to 12 videos (YouTube), 12 backdrops and 12 posters | 1 hour |
+| `/api/movies/<id>/recommendations` | none | Up to 12 similar movies | 1 hour |
 | `/api/movies/<id>/providers` | `region` (optional 2-letter country code; default is the visitor's country, else `US`) | Where to watch in that country, plus every country with data | 6 hours, per country |
 | `/api/people/<id>` | none | Person details with their most popular movies | 1 hour |
 | `/api/genres` | none | List of movie genres (`id`, `name`) | 24 hours |
@@ -141,6 +145,13 @@ curl "http://localhost:3004/api/movies/603"
 - [ ] "Watch trailer" opens a modal that autoplays, and Esc, the close button or a click outside closes it and stops the sound
 - [ ] `/movies/abc` and `/movies/999999999` show the 404 page
 - [ ] "Where to watch" lists services with logos; changing the country dropdown updates the list; "JustWatch" is credited
+- [ ] The movie page shows the vote count, and the in-page links jump to their sections
+- [ ] The cast, similar movies and "Known for" lists scroll sideways: swipe on a phone, arrow buttons on wider screens
+- [ ] The Videos, Backdrops and Posters tabs switch (arrow keys too), each with its own slider
+- [ ] Videos open in the modal, backdrops and posters open full size in a new tab
+- [ ] The Back button on the movie and cast pages returns to the previous page (home if you opened the page directly)
+- [ ] A long review is cut off and shows "Read more"; a short one does not
+- [ ] "Load more reviews" appends more; "You might also like" shows movie cards
 - [ ] Clicking a cast card opens `/people/<id>` with photo, biography ("Read more" for long ones) and known-for movies; `/people/abc` shows the 404 page
 - [ ] "Want to watch" and "Watched" toggle on cards and on the detail page
 - [ ] Reloading keeps the watchlist, and `/watchlist` filters by status
@@ -186,13 +197,19 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 │   │   ├── css/main.css           # Tailwind entry
 │   │   └── img/logo.svg           # Logo and favicon
 │   ├── components/
+│   │   ├── AppSlider.vue          # Horizontal slider with prev/next buttons
+│   │   ├── BackLink.vue           # Back button (previous page, or home on a direct visit)
 │   │   ├── GenreChips.vue         # Genre filter chips
 │   │   ├── MovieCard.vue          # Poster card with watchlist buttons
 │   │   ├── MovieCardSkeleton.vue  # Loading placeholder
+│   │   ├── MovieMedia.vue         # Tabs for videos, backdrops and posters
+│   │   ├── MovieReviews.vue       # User reviews with load more
+│   │   ├── ReviewItem.vue         # One review with measured Read more
+│   │   ├── SimilarMovies.vue      # Recommendations
 │   │   ├── TrailerPlayer.vue      # Trailer button and modal player
 │   │   ├── WhereToWatch.vue       # Streaming providers with country dropdown
 │   │   └── WatchlistButtons.vue   # Want / Watched toggles
-│   ├── composables/useDebouncedRef.ts
+│   ├── composables/               # useDebouncedRef, useIsClamped
 │   ├── layouts/default.vue        # Navbar, page shell, TMDB attribution footer
 │   ├── pages/
 │   │   ├── index.vue              # Trending, search and genre browsing
@@ -230,7 +247,7 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 - [x] Genre filter
 - [x] Cast detail page
 - [x] Where to watch
-- [ ] Reviews, media and similar movies
+- [x] Reviews, media and similar movies
 - [ ] Add the official TMDB logo to the footer attribution
 - [ ] Add a screenshot
 - [ ] Automated tests

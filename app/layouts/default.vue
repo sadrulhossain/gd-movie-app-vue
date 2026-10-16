@@ -13,7 +13,7 @@ const open = ref(false)
       <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <NuxtLink to="/" class="flex items-center gap-2 text-lg font-bold">
           <img src="~/assets/img/logo.svg" alt="" class="h-8 w-8">
-          Movie App
+          GD Movies
         </NuxtLink>
 
         <button

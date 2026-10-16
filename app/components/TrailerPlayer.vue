@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Trailer } from '#shared/types/movie'
 
-const props = defineProps<{ trailer: Trailer }>()
+const props = defineProps<{ trailer: Trailer, bare?: boolean }>()
 
 const dialog = useTemplateRef<HTMLDialogElement>('dialog')
 const open = ref(false)
@@ -28,12 +28,13 @@ function onClick(event: MouseEvent) {
 </script>
 
 <template>
+  <!-- `bare` drops the button styling so a slot (for example a thumbnail) can be the trigger. -->
   <button
     type="button"
-    class="inline-block rounded bg-indigo-600 px-4 py-2 font-semibold hover:bg-indigo-500"
+    :class="bare ? 'block w-full text-left' : 'inline-block rounded bg-indigo-600 px-4 py-2 font-semibold hover:bg-indigo-500'"
     @click="show"
   >
-    ▶ Watch trailer
+    <slot>▶ Watch trailer</slot>
   </button>
 
   <dialog
