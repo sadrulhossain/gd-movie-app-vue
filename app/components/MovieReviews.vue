@@ -34,16 +34,6 @@ async function loadMore() {
   }
 }
 
-const expanded = ref(new Set<string>())
-const isLong = (review: Review) => review.content.length > 500
-
-function toggle(id: string) {
-  if (expanded.value.has(id)) expanded.value.delete(id)
-  else expanded.value.add(id)
-}
-
-const formatDate = (value: string) =>
-  new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(value))
 </script>
 
 <template>
@@ -58,34 +48,7 @@ const formatDate = (value: string) =>
     <p v-else-if="!reviews.length" class="text-slate-400">No reviews yet.</p>
 
     <ul v-else class="space-y-4">
-      <li v-for="review in reviews" :key="review.id" class="rounded-lg border border-slate-800 bg-slate-900 p-4">
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-          <span class="font-semibold">{{ review.author }}</span>
-          <span v-if="review.rating !== null" class="font-semibold text-amber-400">★ {{ review.rating }}/10</span>
-          <span class="text-slate-500">{{ formatDate(review.createdAt) }}</span>
-        </div>
-
-        <!-- Plain text only: never render review content as HTML. -->
-        <p
-          class="mt-2 whitespace-pre-line text-sm text-slate-200"
-          :class="{ 'line-clamp-6': isLong(review) && !expanded.has(review.id) }"
-        >
-          {{ review.content }}
-        </p>
-
-        <div class="mt-2 flex gap-4 text-sm">
-          <button
-            v-if="isLong(review)"
-            type="button"
-            class="text-indigo-400 hover:text-indigo-300"
-            :aria-expanded="expanded.has(review.id)"
-            @click="toggle(review.id)"
-          >
-            {{ expanded.has(review.id) ? 'Show less' : 'Read more' }}
-          </button>
-          <a :href="review.url" target="_blank" rel="noopener" class="text-slate-400 hover:text-white">View on TMDB</a>
-        </div>
-      </li>
+      <ReviewItem v-for="review in reviews" :key="review.id" :review="review" />
     </ul>
 
     <div v-if="hasMore" class="flex items-center gap-3">

@@ -28,8 +28,9 @@ const facts = computed(() => {
   ].filter((fact): fact is { label: string, value: string } => Boolean(fact))
 })
 
+const bio = useTemplateRef<HTMLElement>('bio')
 const expanded = ref(false)
-const isLong = computed(() => (person.value?.biography.length ?? 0) > 600)
+const clamped = useIsClamped(bio, expanded)
 
 useSeoMeta({
   title: () => person.value?.name,
@@ -49,7 +50,7 @@ useSeoMeta({
   </div>
 
   <article v-else-if="person" class="space-y-8">
-    <NuxtLink to="/" class="text-sm text-slate-400 hover:text-white">← Back to movies</NuxtLink>
+    <BackLink />
 
     <div class="flex flex-col gap-6 sm:flex-row">
       <div class="mx-auto w-48 shrink-0 sm:mx-0 sm:w-56">
@@ -77,12 +78,12 @@ useSeoMeta({
 
         <div>
           <h2 class="mb-1 font-semibold">Biography</h2>
-          <p v-if="person.biography" class="max-w-prose whitespace-pre-line text-slate-200" :class="{ 'line-clamp-6': isLong && !expanded }">
+          <p v-if="person.biography" ref="bio" class="max-w-prose whitespace-pre-line text-slate-200" :class="{ 'line-clamp-6': !expanded }">
             {{ person.biography }}
           </p>
           <p v-else class="text-slate-400">No biography available.</p>
           <button
-            v-if="isLong"
+            v-if="clamped || expanded"
             type="button"
             class="mt-2 text-sm text-indigo-400 hover:text-indigo-300"
             :aria-expanded="expanded"
@@ -96,9 +97,11 @@ useSeoMeta({
 
     <section v-if="person.knownFor.length" aria-labelledby="known-for-heading">
       <h2 id="known-for-heading" class="mb-4 text-xl font-bold">Known for</h2>
-      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        <MovieCard v-for="movie in person.knownFor" :key="movie.id" :movie="movie" />
-      </div>
+      <AppSlider label="known for movies">
+        <li v-for="movie in person.knownFor" :key="movie.id" class="w-40 shrink-0 snap-start sm:w-44">
+          <MovieCard :movie="movie" />
+        </li>
+      </AppSlider>
     </section>
   </article>
 </template>

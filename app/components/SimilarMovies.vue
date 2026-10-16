@@ -18,8 +18,10 @@ const { data, status } = useFetch<MovieSummary[]>(() => `/api/movies/${props.mov
     <p v-else-if="!data" class="text-slate-400">Recommendations could not be loaded.</p>
     <p v-else-if="!data.length" class="text-slate-400">No recommendations available.</p>
 
-    <div v-else class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-      <MovieCard v-for="movie in data" :key="movie.id" :movie="movie" />
-    </div>
+    <AppSlider v-else label="similar movies">
+      <li v-for="movie in data" :key="movie.id" class="w-40 shrink-0 snap-start sm:w-44">
+        <MovieCard :movie="movie" />
+      </li>
+    </AppSlider>
   </section>
 </template>

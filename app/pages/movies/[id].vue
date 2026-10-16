@@ -40,7 +40,7 @@ useSeoMeta({
   </div>
 
   <article v-else-if="movie" class="space-y-8">
-    <NuxtLink to="/" class="text-sm text-slate-400 hover:text-white">← Back to movies</NuxtLink>
+    <BackLink />
 
     <div class="relative overflow-hidden rounded-xl bg-slate-900">
       <img
@@ -101,8 +101,8 @@ useSeoMeta({
 
     <section v-if="movie.cast.length" id="cast" aria-labelledby="cast-heading" class="scroll-mt-4">
       <h2 id="cast-heading" class="mb-4 text-xl font-bold">Cast</h2>
-      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        <li v-for="person in movie.cast" :key="person.id">
+      <AppSlider label="cast">
+        <li v-for="person in movie.cast" :key="person.id" class="w-36 shrink-0 snap-start sm:w-40">
           <NuxtLink
             :to="`/people/${person.id}`"
             class="block overflow-hidden rounded-lg border border-slate-800 bg-slate-900 transition hover:border-indigo-500"
@@ -123,7 +123,7 @@ useSeoMeta({
             </div>
           </NuxtLink>
         </li>
-      </ul>
+      </AppSlider>
     </section>
 
     <MovieMedia :movie-id="movie.id" />
