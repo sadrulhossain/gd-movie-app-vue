@@ -1,3 +1,7 @@
+<script setup lang="ts">
+useHead({ title: 'Watchlist' })
+</script>
+
 <template>
   <section>
     <h1 class="text-2xl font-bold">Watchlist</h1>
