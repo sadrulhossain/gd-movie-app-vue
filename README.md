@@ -1,6 +1,6 @@
 # Movie App
 
-A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.org/). It has no authentication and no database: movie data comes from TMDB through Nuxt server routes.
+A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.org/). It has no authentication and no database: movie data comes from TMDB through Nuxt server routes, and the watchlist lives in your browser.
 
 ![Nuxt](https://img.shields.io/badge/Nuxt-4-00DC82?logo=nuxt&logoColor=white)
 ![Vue](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)
@@ -8,9 +8,19 @@ A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.o
 ![Pinia](https://img.shields.io/badge/Pinia-4-FFD859?logo=pinia&logoColor=black)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 
-![Screenshot placeholder](docs/screenshot.png)
+> Screenshot: add an image at `docs/screenshot.png` and reference it here.
 
-> Screenshot coming soon.
+## Features
+
+- Trending movies of the week as the default home view
+- Debounced search, with the query and page kept in the URL (`/?q=matrix&page=2`)
+- Pagination, plus skeleton, empty and error states
+- Movie detail page (`/movies/<id>`), server-rendered, with SEO and social tags, poster and backdrop, rating, genres, runtime, cast and a YouTube trailer link
+- A friendly 404 for unknown or invalid movie ids
+- Local watchlist with "Want to watch" and "Watched" buttons on every card and on the detail page, saved to `localStorage`, with a filterable `/watchlist` page
+- Responsive layout with a mobile navbar
+- The TMDB key stays on the server: the browser only talks to `/api/movies/*`
+- Short server-side caching of TMDB responses
 
 ## Tech stack
 
@@ -22,6 +32,7 @@ A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.o
 | State | [Pinia](https://pinia.vuejs.org/) (`@pinia/nuxt`) |
 | Data | [TMDB API](https://developer.themoviedb.org/) via Nuxt server routes |
 | Development | Docker and Docker Compose |
+| Hosting | Cloudflare Workers |
 
 ## Prerequisites
 
@@ -52,7 +63,7 @@ Open `.env` and set your values:
 
 | Variable | Description | Secret |
 | --- | --- | --- |
-| `NUXT_TMDB_API_KEY` | Your TMDB API key. Server-side only, never sent to the browser. | **SECRET** |
+| `NUXT_TMDB_API_KEY` | Your TMDB API key (the v3 "API Key" or the "API Read Access Token"). Server-side only, never sent to the browser. | **SECRET** |
 | `HOST_PORT` | Port on your machine the app is served on. Default: `3004`. | No |
 
 Start the app:
@@ -75,27 +86,112 @@ Rebuild the image (for example after changing the `Dockerfile`):
 docker compose up --build
 ```
 
+After editing `.env`, recreate the container so it picks up the new values:
+
+```bash
+docker compose up -d --force-recreate
+```
+
+## API routes
+
+All routes are `GET`, served by Nuxt server routes that call TMDB with the private key. Responses are normalized (camelCase fields, full image URLs).
+
+| Route | Query | Returns | Cache |
+| --- | --- | --- | --- |
+| `/api/movies/trending` | `page` (1 to 500, default 1) | Paginated list of movies | 1 hour |
+| `/api/movies/search` | `query` (required, max 100 characters), `page` (1 to 500, default 1) | Paginated list of movies | 5 minutes |
+| `/api/movies/<id>` | none | Movie details with top cast and trailer | 1 hour |
+
+Errors:
+
+| Status | Meaning |
+| --- | --- |
+| 400 | Invalid `query`, `page` or `id` |
+| 404 | Movie not found |
+| 429 | TMDB rate limit reached |
+| 500 | `TMDB API key is not configured` |
+| 502 | TMDB rejected the key, or the request failed |
+
+Try them:
+
+```bash
+curl "http://localhost:3004/api/movies/trending"
+curl "http://localhost:3004/api/movies/search?query=matrix&page=1"
+curl "http://localhost:3004/api/movies/603"
+```
+
+## Manual test checklist
+
+- [ ] Home shows "Trending this week" with movie cards
+- [ ] Typing in the search box updates the URL (`?q=`) about half a second after you stop typing
+- [ ] Reloading `/?q=matrix&page=2` shows the same results
+- [ ] Browser back and forward restore the previous search and page
+- [ ] Next and Previous change the page, and the page scrolls to the top
+- [ ] A search with no results (for example `zzzzzz`) shows the empty message
+- [ ] Clicking a card opens `/movies/<id>` with poster, rating, cast and a trailer link
+- [ ] `/movies/abc` and `/movies/999999999` show the 404 page
+- [ ] "Want to watch" and "Watched" toggle on cards and on the detail page
+- [ ] Reloading keeps the watchlist, and `/watchlist` filters by status
+- [ ] No console errors or hydration warnings
+- [ ] The mobile menu opens and closes on a narrow window
+
+## Troubleshooting
+
+**Port 3004 is already in use.** Pick another host port in `.env` (for example `HOST_PORT=3005`), then run `docker compose up -d --force-recreate` and open that port. To see what is using the port on Windows, run `netstat -ano | findstr :3004`.
+
+**Hot reload does not work.** Docker on Windows and macOS does not pass file-change events from your project folder into the container, so the compose file turns on polling (`CHOKIDAR_USEPOLLING`). Make sure the project folder is shared with Docker Desktop, save the file again, and if it still does not update, run `docker compose restart app`.
+
+**"TMDB API key is not configured" (500).** `NUXT_TMDB_API_KEY` is empty or missing in the container. Check `.env`, then run `docker compose up -d --force-recreate`. On Cloudflare, add it as a **Secret** in the Worker's runtime Variables and Secrets (not the Build section).
+
+**"TMDB rejected the configured API key" (502).** The key is wrong, still the placeholder `your_key_here`, or not active yet. Copy it again from [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api) without quotes or spaces. If you still see old data after fixing it, clear the dev cache and restart:
+
+```bash
+docker compose exec app rm -rf .nuxt/cache/nitro/handlers
+docker compose restart app
+```
+
+**Images do not load.** Posters, backdrops and cast photos come from `image.tmdb.org`. Check that your network, VPN or ad blocker is not blocking it, and open the movie's `posterUrl` from `/api/movies/<id>` directly in the browser. A movie without an image shows "No poster" or "No photo" on purpose.
+
 ## Deployment (Cloudflare Workers)
 
-The app needs a server runtime for its `/api/movies/*` routes, which keep the TMDB key off the browser, so it cannot be hosted on GitHub Pages (static files only). It deploys to Cloudflare Workers instead, using the `cloudflare_module` preset set in `nuxt.config.ts`.
+The app needs a server runtime for its `/api/movies/*` routes, which keep the TMDB key off the browser, so it cannot be hosted on GitHub Pages (static files only). It deploys to Cloudflare Workers, using the `cloudflare_module` preset set in `nuxt.config.ts`.
 
-1. In the Cloudflare dashboard, go to **Workers & Pages**, choose **Create**, then **Import a repository**, and select this repository.
+1. In the Cloudflare dashboard, go to **Workers & Pages**, create an application, and import this repository.
 2. Use these settings: build command `npm run build`, deploy command `npx wrangler deploy`, production branch `main`.
-3. Add your key as a **secret** named `NUXT_TMDB_API_KEY` under the Worker's **Settings**, then **Variables and Secrets**. Never put it in the repository.
+3. In the Worker's **Settings**, open the runtime **Variables and Secrets** (not the Build section) and add a **Secret** named `NUXT_TMDB_API_KEY`. Never put the key in the repository.
 4. Push to `main` and Cloudflare builds and deploys automatically.
+
+The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worker has a different name, the secret must be on the Worker that is actually deployed.
 
 ## Project structure
 
 ```text
 .
 ├── app/
-│   ├── assets/css/main.css   # Tailwind entry
-│   ├── layouts/default.vue   # Navbar and page shell
-│   ├── pages/                # Home and Watchlist routes
-│   ├── stores/counter.ts     # Pinia test store
+│   ├── assets/
+│   │   ├── css/main.css           # Tailwind entry
+│   │   └── img/logo.svg           # Logo and favicon
+│   ├── components/
+│   │   ├── MovieCard.vue          # Poster card with watchlist buttons
+│   │   ├── MovieCardSkeleton.vue  # Loading placeholder
+│   │   └── WatchlistButtons.vue   # Want / Watched toggles
+│   ├── composables/useDebouncedRef.ts
+│   ├── layouts/default.vue        # Navbar, page shell, TMDB attribution footer
+│   ├── pages/
+│   │   ├── index.vue              # Trending and search
+│   │   ├── movies/[id].vue        # Movie details
+│   │   └── watchlist.vue          # Saved movies
+│   ├── plugins/watchlist.client.ts  # Loads and saves the watchlist (browser only)
+│   ├── stores/
+│   │   ├── watchlist.ts           # Watchlist Pinia store
+│   │   └── counter.ts             # Pinia demo store (not used by any page)
 │   └── app.vue
-├── public/                   # Static files
-├── .env.example              # Environment variable template
+├── server/
+│   ├── api/movies/                # trending, search and [id] routes
+│   └── utils/                     # TMDB client and response normalization
+├── shared/                        # Types and helpers used by server and client
+├── public/                        # Static files
+├── .env.example                   # Environment variable template
 ├── docker-compose.yml
 ├── Dockerfile
 ├── nuxt.config.ts
@@ -107,11 +203,15 @@ The app needs a server runtime for its `/api/movies/*` routes, which keep the TM
 - [x] Nuxt project with Docker and Git setup
 - [x] Tailwind CSS and Pinia
 - [x] README
-- [ ] TMDB server routes
-- [ ] Movie list and search
-- [ ] Movie details
-- [ ] Watchlist
-- [ ] Polish and deployment
+- [x] TMDB server routes
+- [x] Movie list and search
+- [x] Movie details
+- [x] Local watchlist
+- [x] Cloudflare Workers deployment
+- [ ] Add the official TMDB logo to the footer attribution
+- [ ] Add a screenshot
+- [ ] Automated tests
+- [ ] Sync the watchlist across browser tabs
 
 ## Attribution
 
@@ -119,4 +219,4 @@ This product uses the TMDB API but is not endorsed or certified by TMDB.
 
 ## License
 
-Released under the MIT License.
+Released under the [MIT License](LICENSE).
