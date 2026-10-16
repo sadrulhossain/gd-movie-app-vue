@@ -19,7 +19,8 @@ export default defineNuxtConfig({
   // The preset only affects `nuxt build`; `nuxt dev` in Docker is unchanged.
   nitro: {
     preset: 'cloudflare_module',
-    cloudflare: { deployConfig: true, nodeCompat: true }
+    // keep_vars: `wrangler deploy` otherwise deletes plain variables added in the dashboard
+    cloudflare: { deployConfig: true, nodeCompat: true, wrangler: { keep_vars: true } }
   },
   watchers: { chokidar: { usePolling, interval: 300 } },
   vite: {
