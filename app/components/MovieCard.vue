@@ -7,7 +7,10 @@ const year = computed(() => props.movie.releaseDate?.slice(0, 4) ?? 'TBA')
 </script>
 
 <template>
-  <article class="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">
+  <NuxtLink
+    :to="`/movies/${movie.id}`"
+    class="block overflow-hidden rounded-lg border border-slate-800 bg-slate-900 transition hover:border-indigo-500"
+  >
     <div class="relative aspect-[2/3] bg-slate-800">
       <img
         v-if="movie.posterUrl"
@@ -27,5 +30,5 @@ const year = computed(() => props.movie.releaseDate?.slice(0, 4) ?? 'TBA')
       <h3 class="line-clamp-2 text-sm font-semibold">{{ movie.title }}</h3>
       <p class="mt-1 text-xs text-slate-400">{{ year }}</p>
     </div>
-  </article>
+  </NuxtLink>
 </template>

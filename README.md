@@ -75,6 +75,15 @@ Rebuild the image (for example after changing the `Dockerfile`):
 docker compose up --build
 ```
 
+## Deployment (Cloudflare Workers)
+
+The app needs a server runtime for its `/api/movies/*` routes, which keep the TMDB key off the browser, so it cannot be hosted on GitHub Pages (static files only). It deploys to Cloudflare Workers instead, using the `cloudflare_module` preset set in `nuxt.config.ts`.
+
+1. In the Cloudflare dashboard, go to **Workers & Pages**, choose **Create**, then **Import a repository**, and select this repository.
+2. Use these settings: build command `npm run build`, deploy command `npx wrangler deploy`, production branch `main`.
+3. Add your key as a **secret** named `NUXT_TMDB_API_KEY` under the Worker's **Settings**, then **Variables and Secrets**. Never put it in the repository.
+4. Push to `main` and Cloudflare builds and deploys automatically.
+
 ## Project structure
 
 ```text
@@ -85,7 +94,6 @@ docker compose up --build
 │   ├── pages/                # Home and Watchlist routes
 │   ├── stores/counter.ts     # Pinia test store
 │   └── app.vue
-├── .github/workflows/        # GitHub Pages deploy workflow
 ├── public/                   # Static files
 ├── .env.example              # Environment variable template
 ├── docker-compose.yml
