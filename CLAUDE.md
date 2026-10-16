@@ -26,9 +26,9 @@ The user is learning while building. Every step has: (a) concept in 4 lines or f
 
 - The app is developed in 9 segments, numbered 0–8.
 - Segment 0 is the initial project directory setup. It lives in the initial `main` commit(s). Only segment 0 goes directly into `main`.
-- No segments are done yet.
+- Segment 0 is done.
 - When a segment is finished, the user will provide instructions for the next one. Do not start a segment without those instructions.
-- Before starting a new segment, create a branch from an updated `main` (pull/update first), named `feature/<feature-name-in-snake-case>`, e.g. `feature/movie_list`.
+- Before starting a new segment, create a branch from an updated `main` (pull/update first), named `feature/<feature-name-in-kebab-case>`, e.g. `feature/movie-list`.
 - Do all work for segments 1–8 on their feature branch, not on `main`.
 
 ## Commits and code changes
