@@ -1,0 +1,25 @@
+# IDE
+/.idea
+
+# Dependencies
+node_modules
+
+# Nuxt build output and generated files
+.nuxt
+.output
+.data
+.nitro
+.cache
+dist
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
+
+# Environment (real secrets never committed)
+.env
+.env.*
+!.env.example
