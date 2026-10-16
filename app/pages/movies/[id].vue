@@ -81,15 +81,7 @@ useSeoMeta({
           <p v-if="movie.overview" class="max-w-prose text-slate-200">{{ movie.overview }}</p>
 
           <div class="flex flex-wrap items-center gap-3">
-            <a
-              v-if="movie.trailer"
-              :href="movie.trailer.url"
-              target="_blank"
-              rel="noopener"
-              class="inline-block rounded bg-indigo-600 px-4 py-2 font-semibold hover:bg-indigo-500"
-            >
-              ▶ Watch trailer on YouTube
-            </a>
+            <TrailerPlayer v-if="movie.trailer" :trailer="movie.trailer" />
             <WatchlistButtons :movie="movie" />
           </div>
         </div>

@@ -15,7 +15,7 @@ A movie browsing app built with Nuxt, powered by [TMDB](https://www.themoviedb.o
 - Trending movies of the week as the default home view
 - Debounced search, with the query and page kept in the URL (`/?q=matrix&page=2`)
 - Pagination, plus skeleton, empty and error states
-- Movie detail page (`/movies/<id>`), server-rendered, with SEO and social tags, poster and backdrop, rating, genres, runtime, cast and a YouTube trailer link
+- Movie detail page (`/movies/<id>`), server-rendered, with SEO and social tags, poster and backdrop, rating, genres, runtime, cast and a trailer that plays in a modal on the page
 - A friendly 404 for unknown or invalid movie ids
 - Local watchlist with "Want to watch" and "Watched" buttons on every card and on the detail page, saved to `localStorage`, with a filterable `/watchlist` page
 - Responsive layout with a mobile navbar
@@ -128,7 +128,8 @@ curl "http://localhost:3004/api/movies/603"
 - [ ] Browser back and forward restore the previous search and page
 - [ ] Next and Previous change the page, and the page scrolls to the top
 - [ ] A search with no results (for example `zzzzzz`) shows the empty message
-- [ ] Clicking a card opens `/movies/<id>` with poster, rating, cast and a trailer link
+- [ ] Clicking a card opens `/movies/<id>` with poster, rating, cast and a trailer button
+- [ ] "Watch trailer" opens a modal that autoplays, and Esc, the close button or a click outside closes it and stops the sound
 - [ ] `/movies/abc` and `/movies/999999999` show the 404 page
 - [ ] "Want to watch" and "Watched" toggle on cards and on the detail page
 - [ ] Reloading keeps the watchlist, and `/watchlist` filters by status
@@ -152,6 +153,8 @@ docker compose restart app
 
 **Images do not load.** Posters, backdrops and cast photos come from `image.tmdb.org`. Check that your network, VPN or ad blocker is not blocking it, and open the movie's `posterUrl` from `/api/movies/<id>` directly in the browser. A movie without an image shows "No poster" or "No photo" on purpose.
 
+**The trailer does not play.** Trailers use YouTube's embedded player, so your network, VPN or ad blocker must allow `youtube-nocookie.com`. Some videos disable embedding: use the "Open it on YouTube" link in the modal.
+
 ## Deployment (Cloudflare Workers)
 
 The app needs a server runtime for its `/api/movies/*` routes, which keep the TMDB key off the browser, so it cannot be hosted on GitHub Pages (static files only). It deploys to Cloudflare Workers, using the `cloudflare_module` preset set in `nuxt.config.ts`.
@@ -174,6 +177,7 @@ The Worker is named `sadrulhossain-gd-movie-app-vue` by the build. If your Worke
 │   ├── components/
 │   │   ├── MovieCard.vue          # Poster card with watchlist buttons
 │   │   ├── MovieCardSkeleton.vue  # Loading placeholder
+│   │   ├── TrailerPlayer.vue      # Trailer button and modal player
 │   │   └── WatchlistButtons.vue   # Want / Watched toggles
 │   ├── composables/useDebouncedRef.ts
 │   ├── layouts/default.vue        # Navbar, page shell, TMDB attribution footer

@@ -52,7 +52,10 @@ export function normalizeList(list: TmdbList): Paginated<MovieSummary> {
 }
 
 function pickTrailer(videos: TmdbDetails['videos']): Trailer | null {
-  const youtube = (videos?.results ?? []).filter(v => v.site === 'YouTube' && v.type === 'Trailer')
+  // Only well-formed 11-character YouTube ids may reach an iframe URL.
+  const youtube = (videos?.results ?? []).filter(
+    v => v.site === 'YouTube' && v.type === 'Trailer' && /^[\w-]{11}$/.test(v.key)
+  )
   const video = youtube.find(v => v.official) ?? youtube[0]
   return video
     ? { name: video.name, youtubeKey: video.key, url: `https://www.youtube.com/watch?v=${video.key}` }
