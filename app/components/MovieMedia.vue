@@ -39,7 +39,7 @@ function onKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-  <section id="media" aria-labelledby="media-heading" class="scroll-mt-4 space-y-4">
+  <section id="media" aria-labelledby="media-heading" class="scroll-mt-20 space-y-4">
     <h2 id="media-heading" class="text-xl font-bold">Videos and images</h2>
 
     <p v-if="!data && status !== 'error'" class="text-slate-400">Loading media...</p>

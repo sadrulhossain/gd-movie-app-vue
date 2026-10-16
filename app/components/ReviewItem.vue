@@ -38,7 +38,7 @@ const formatDate = (value: string) =>
       >
         {{ expanded ? 'Show less' : 'Read more' }}
       </button>
-      <a :href="review.url" target="_blank" rel="noopener" class="text-slate-400 hover:text-white">View on TMDB</a>
+      <a :href="review.url" target="_blank" rel="noopener" class="text-slate-400 hover:text-slate-100">View on TMDB</a>
     </div>
   </li>
 </template>

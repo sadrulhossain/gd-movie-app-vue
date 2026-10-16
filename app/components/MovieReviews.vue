@@ -37,7 +37,7 @@ async function loadMore() {
 </script>
 
 <template>
-  <section id="reviews" aria-labelledby="reviews-heading" class="scroll-mt-4 space-y-4">
+  <section id="reviews" aria-labelledby="reviews-heading" class="scroll-mt-20 space-y-4">
     <h2 id="reviews-heading" class="text-xl font-bold">
       Reviews<span v-if="data?.totalResults" class="font-normal text-slate-400"> ({{ data.totalResults }})</span>
     </h2>

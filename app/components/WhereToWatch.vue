@@ -42,7 +42,7 @@ const groups = computed(() => {
 </script>
 
 <template>
-  <section id="where-to-watch" aria-labelledby="watch-heading" class="scroll-mt-4 space-y-4">
+  <section id="where-to-watch" aria-labelledby="watch-heading" class="scroll-mt-20 space-y-4">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <h2 id="watch-heading" class="text-xl font-bold">Where to watch</h2>
 

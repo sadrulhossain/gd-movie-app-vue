@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+/* Dark is the default theme. */
+:root {
+  color-scheme: dark;
+}
+
+/*
+ * Light theme: the app styles its neutrals with the slate scale (page = 950, surfaces = 900/800,
+ * text = 100..400). Flipping the scale under `.light` re-themes every component without
+ * touching them. A few accent colours are darkened so they stay readable on a light page.
+ */
+:root.light {
+  color-scheme: light;
+  --color-slate-50: oklch(12.9% 0.042 264.695);
+  --color-slate-100: oklch(20.8% 0.042 265.755);
+  --color-slate-200: oklch(27.9% 0.041 260.031);
+  --color-slate-300: oklch(37.2% 0.044 257.287);
+  --color-slate-400: oklch(44.6% 0.043 257.281);
+  --color-slate-500: oklch(55.4% 0.046 257.417);
+  --color-slate-600: oklch(70.4% 0.04 256.788);
+  --color-slate-700: oklch(86.9% 0.022 252.894);
+  --color-slate-800: oklch(92.9% 0.013 255.508);
+  --color-slate-900: oklch(96.8% 0.007 247.896);
+  --color-slate-950: oklch(98.4% 0.003 247.858);
+
+  --color-amber-400: oklch(66.6% 0.179 58.318);
+  --color-indigo-400: oklch(51.1% 0.262 276.966);
+  --color-indigo-300: oklch(45.7% 0.24 277.023);
+  --color-red-400: oklch(57.7% 0.245 27.325);
+  --color-red-900: oklch(88.5% 0.062 18.334);
+  --color-red-950: oklch(97.1% 0.013 17.38);
+}
